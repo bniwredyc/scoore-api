@@ -1,6 +1,25 @@
 Rails.application.routes.draw do
+
+  mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
+
+  devise_for :users,
+             :path => '',
+             :path_names => {:sign_in => 'login', :sign_out => 'logout'},
+             controllers: {
+                 sessions: 'users/sessions'
+             }
+
+  #api
+
+  namespace :v1, defaults: {format: 'json'} do
+    post :auth, :to => 'auth#create'
+    resources :events, only: [:index, :create, :show, :update, :destroy]
+    resources :athletes, only: [:index, :create, :show, :update, :destroy]
+  end
+
+  root 'welcome#index'
 
   # You can have the root of your site routed with "root"
   # root 'welcome#index'
